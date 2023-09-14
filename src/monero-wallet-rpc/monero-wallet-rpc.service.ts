@@ -3,42 +3,48 @@ import { CreateWalletDto } from './dto/creat-wallet-rpc.dto';
 import { InjectModel } from 'nestjs-typegoose';
 import { WalletModel } from './model/creatWallet.model/wallet.model';
 import { ModelType } from '@typegoose/typegoose/lib/types';
-import {connectToWalletRpc}  from 'monero-javascript' ;
-import { GetBalanceDto } from './dto/getBalance.dto';
-
+import { connectToWalletRpc } from 'monero-javascript';
+import { GetTxsForSubAddressIndexDto } from './dto/get-txs-for-subAddress-index.dto';
 
 @Injectable()
 export class MoneroWalletRpcService {
+  constructor(
+    @InjectModel(WalletModel)
+    private readonly walletModel: ModelType<WalletModel>,
+  ) {}
 
-    constructor (@InjectModel(WalletModel) private readonly walletModel: ModelType<WalletModel>){
+  async getAddressForReplenishment() {
+    let walletRpc = await this.getWallet();
 
-    }
+    let subAddress = await walletRpc.createSubaddress(0);
 
-    // async create(dto: CreateWalletDto){
+    return {
+      address: subAddress.getAddress(),
+      index: subAddress.getIndex(),
+    };
+  }
 
-    //     const newUser = new this.walletModel({
-    //         idUSer:dto.idUser
-    //     });
-    //     return  newUser.save()
-    // }
+  async getTxsForSubAddressIndex(dto: GetTxsForSubAddressIndexDto) {
+    let walletRpc = await this.getWallet();
 
-    async newAddres(){
-        let walletRpc = await connectToWalletRpc("http://192.168.0.2:18084", "monero", "rpcPassword"); 
-        await walletRpc.openWallet("boss", "1");    
-        // let primaryAddress = await walletRpc.getPrimaryAddress(); // 555zgduFhmKd2o8rPU z...
-        let subAddress = await walletRpc.createSubaddress(0,"new-sub")
-        // let balance = await walletRpc.getBalance(0,4);               // 533648366742
-        // let txs = await walletRpc.getTxs();         
-        return {
-            address:subAddress.state.address,
-            index:subAddress.state.index
-        }
-    }
+    let transfers = await walletRpc.getTransfers({
+      isOutgoing: false,
+      accountIndex: 0,
+      subaddressIndex: dto.addressIndex,
+    });
 
-    async getBalance(dto: GetBalanceDto){
-        let walletRpc = await connectToWalletRpc("http://192.168.0.2:18084", "monero", "rpcPassword"); 
-        let balance = await walletRpc.getBalance(0,dto.index); 
-        
-        return balance._d;
-    }
+    return transfers.map((moneroTransfer) => {
+      return moneroTransfer.getTx().toJson();
+    });
+  }
+
+  async getWallet() {
+    return await (
+      await connectToWalletRpc(
+        'http://192.168.0.2:18084',
+        'monero',
+        'rpcPassword',
+      )
+    ).openWallet('boss', '1');
+  }
 }
