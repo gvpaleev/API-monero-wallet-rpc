@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateWalletDto } from './dto/creat-wallet-rpc.dto';
+import { CreateSubAccountForReplenishmentDto } from './dto/Creat-subAddress-for-replenishment.dto';
 import { InjectModel } from 'nestjs-typegoose';
 import { WalletModel } from './model/creatWallet.model/wallet.model';
 import { ModelType } from '@typegoose/typegoose/lib/types';
@@ -8,15 +8,14 @@ import { GetTxsForSubAddressIndexDto } from './dto/get-txs-for-subAddress-index.
 
 @Injectable()
 export class MoneroWalletRpcService {
-  constructor(
-    @InjectModel(WalletModel)
-    private readonly walletModel: ModelType<WalletModel>,
-  ) {}
+  constructor() {} // private readonly walletModel: ModelType<WalletModel>, // @InjectModel(WalletModel)
 
-  async getAddressForReplenishment() {
+  async createSubAccountForReplenishment(
+    dto: CreateSubAccountForReplenishmentDto,
+  ) {
     let walletRpc = await this.getWallet();
 
-    let subAddress = await walletRpc.createSubaddress(0);
+    let subAddress = await walletRpc.createSubaddress(dto.accountIndex);
 
     return {
       address: subAddress.getAddress(),

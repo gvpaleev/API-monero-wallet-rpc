@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { MoneroWalletRpcService } from './monero-wallet-rpc.service';
-import { CreateWalletDto } from './dto/creat-wallet-rpc.dto';
+import { CreateSubAccountForReplenishmentDto } from './dto/Creat-subAddress-for-replenishment.dto';
 import { GetTxsForSubAddressIndexDto } from './dto/get-txs-for-subAddress-index.dto';
 
 @Controller('wallet')
@@ -19,9 +19,11 @@ export class MoneroWalletRpcController {
 
   // }
 
-  @Get('getAddressForReplenishment')
-  async getAddressForReplenishment() {
-    return this.moneroWalletRpcService.getAddressForReplenishment();
+  @Get('createSubAccountForReplenishment')
+  async createSubAccountForReplenishment(
+    @Body() dto: CreateSubAccountForReplenishmentDto,
+  ) {
+    return this.moneroWalletRpcService.createSubAccountForReplenishment(dto);
   }
 
   @Get('getTxsForSubAddressIndex')
