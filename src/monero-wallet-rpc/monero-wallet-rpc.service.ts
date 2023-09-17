@@ -25,7 +25,7 @@ export class MoneroWalletRpcService {
 
   async getTxsForSubAddressIndex(dto: GetTxsForSubAddressIndexDto) {
     let walletRpc = await this.getWallet();
-
+    console.log(dto)
     let transfers = await walletRpc.getTransfers({
       isOutgoing: false,
       accountIndex: 0,

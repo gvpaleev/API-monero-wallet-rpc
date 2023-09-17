@@ -26,8 +26,9 @@ export class MoneroWalletRpcController {
     return this.moneroWalletRpcService.createSubAccountForReplenishment(dto);
   }
 
-  @Get('getTxsForSubAddressIndex')
+  @Post('getTxsForSubAddressIndex')
   async getTxsForSubAddressIndex(@Body() dto: GetTxsForSubAddressIndexDto) {
+    console.log('con :',dto)
     return this.moneroWalletRpcService.getTxsForSubAddressIndex(dto);
   }
 }
