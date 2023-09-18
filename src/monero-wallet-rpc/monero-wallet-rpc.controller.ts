@@ -21,9 +21,9 @@ export class MoneroWalletRpcController {
 
   @Get('createSubAccountForReplenishment')
   async createSubAccountForReplenishment(
-    @Body() dto: CreateSubAccountForReplenishmentDto,
+    // @Body() dto: CreateSubAccountForReplenishmentDto,
   ) {
-    return this.moneroWalletRpcService.createSubAccountForReplenishment(dto);
+    return this.moneroWalletRpcService.createSubAccountForReplenishment();
   }
 
   @Post('getTxsForSubAddressIndex')

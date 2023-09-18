@@ -11,11 +11,11 @@ export class MoneroWalletRpcService {
   constructor() {} // private readonly walletModel: ModelType<WalletModel>, // @InjectModel(WalletModel)
 
   async createSubAccountForReplenishment(
-    dto: CreateSubAccountForReplenishmentDto,
+    // dto: CreateSubAccountForReplenishmentDto,
   ) {
     let walletRpc = await this.getWallet();
 
-    let subAddress = await walletRpc.createSubaddress(dto.accountIndex);
+    let subAddress = await walletRpc.createSubaddress(0);
 
     return {
       address: subAddress.getAddress(),
