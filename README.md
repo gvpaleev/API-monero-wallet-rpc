@@ -1,73 +1,212 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# API Monero Wallet RPC
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+REST API для взаимодействия с Monero Wallet RPC, построенный на фреймворке NestJS. Проект предоставляет удобный интерфейс для управления Monero кошельками, создания субадресов и получения информации о транзакциях.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Описание
 
-## Description
+Этот проект представляет собой backend-сервис для работы с Monero криптовалютой через Wallet RPC. Основные возможности включают:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- Создание субадресов для пополнения кошелька
+- Получение списка транзакций для конкретного субадреса
+- Интеграция с MongoDB для хранения данных
+- Типобезопасная работа с данными через TypeScript
 
-## Installation
+## Технологии
 
+- **NestJS** v10.2.4 - прогрессивный Node.js фреймворк
+- **TypeScript** v5.1.3 - типизированный JavaScript
+- **MongoDB** - NoSQL база данных
+- **Typegoose** v11.5.0 - TypeScript обертка для Mongoose
+- **monero-javascript** v0.8.4 - библиотека для работы с Monero
+- **class-validator** v0.14.0 - валидация данных
+
+## Требования
+
+- Node.js (рекомендуется v18+)
+- npm или yarn
+- MongoDB (v4.0+)
+- Monero Wallet RPC (запущенный и доступный)
+
+## Установка
+
+1. Клонируйте репозиторий:
 ```bash
-$ npm install
+git clone <repository-url>
+cd API-monero-wallet-rpc
 ```
 
-## Running the app
-
+2. Установите зависимости:
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+3. Настройте переменные окружения в файле `.env`:
+```env
+MONGO_LOGIN=admin
+MONGO_PASSWORD=admin
+MONGO_HOST=127.0.0.1
+MONGO_PORT=27017
+MONGO_AUTHDATABASE=admin
+JWT_SECRET=test
 ```
 
-## Support
+## Конфигурация
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Подключение к Monero Wallet RPC
 
-## Stay in touch
+В файле `src/monero-wallet-rpc/monero-wallet-rpc.service.ts` настройте параметры подключения:
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```typescript
+async getWallet() {
+  return await connectToWalletRpc(
+    'http://192.168.0.2:18084',  // URL вашего Wallet RPC
+    'monero',                     // Имя пользователя
+    'rpcPassword',                // Пароль RPC
+  ).openWallet('boss', '1');      // Имя кошелька и пароль
+}
+```
 
-## License
+### Подключение к MongoDB
 
-Nest is [MIT licensed](LICENSE).
+Конфигурация MongoDB находится в `config/mongo.config.ts` и использует переменные окружения из `.env`.
+
+## Запуск приложения
+
+```bash
+# Режим разработки
+npm run start:dev
+
+# Режим отладки
+npm run start:debug
+
+# Production режим
+npm run build
+npm run start:prod
+```
+
+Приложение запустится на порту **3001**.
+
+## API Endpoints
+
+### 1. Создание субадреса для пополнения
+
+**GET** `/wallet/createSubAccountForReplenishment`
+
+Создает новый субадрес в аккаунте 0 для получения платежей.
+
+**Ответ:**
+```json
+{
+  "address": "8BW...",
+  "index": 5
+}
+```
+
+### 2. Получение транзакций для субадреса
+
+**POST** `/wallet/getTxsForSubAddressIndex`
+
+Возвращает список входящих транзакций для указанного субадреса.
+
+**Тело запроса:**
+```json
+{
+  "addressIndex": 5
+}
+```
+
+**Ответ:**
+```json
+[
+  {
+    "hash": "...",
+    "amount": "...",
+    "confirmations": 10,
+    ...
+  }
+]
+```
+
+## Структура проекта
+
+```
+API-monero-wallet-rpc/
+├── src/
+│   ├── monero-wallet-rpc/          # Основной модуль работы с Monero
+│   │   ├── dto/                    # Data Transfer Objects
+│   │   │   ├── Creat-subAddress-for-replenishment.dto.ts
+│   │   │   └── get-txs-for-subAddress-index.dto.ts
+│   │   ├── model/                  # Модели данных
+│   │   │   └── creatWallet.model/
+│   │   │       └── wallet.model.ts
+│   │   ├── monero-wallet-rpc.controller.ts
+│   │   ├── monero-wallet-rpc.service.ts
+│   │   └── monero-wallet-rpc.module.ts
+│   ├── app.module.ts               # Корневой модуль приложения
+│   ├── app.controller.ts
+│   ├── app.service.ts
+│   └── main.ts                     # Точка входа
+├── config/
+│   └── mongo.config.ts             # Конфигурация MongoDB
+├── test/                           # E2E тесты
+├── .env                            # Переменные окружения
+├── package.json
+└── tsconfig.json
+```
+
+## Разработка
+
+### Форматирование кода
+
+```bash
+npm run format
+```
+
+### Линтинг
+
+```bash
+npm run lint
+```
+
+### Тестирование
+
+```bash
+# Unit тесты
+npm run test
+
+# E2E тесты
+npm run test:e2e
+
+# Покрытие тестами
+npm run test:cov
+
+# Режим watch
+npm run test:watch
+```
+
+## Модели данных
+
+### WalletModel
+
+Модель для хранения информации о кошельках в MongoDB:
+
+```typescript
+{
+  idUSer: string;      // ID пользователя
+  createdAt: Date;     // Дата создания
+  updatedAt: Date;     // Дата обновления
+}
+```
+
+## Безопасность
+
+⚠️ **Важно:**
+- Не храните приватные ключи в коде
+- Используйте переменные окружения для конфиденциальных данных
+- Измените дефолтные пароли в `.env` перед деплоем
+- Настройте firewall для ограничения доступа к Wallet RPC
+- Используйте HTTPS в production окружении
+
+## Лицензия
+
+UNLICENSED
