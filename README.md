@@ -1,46 +1,46 @@
 # API Monero Wallet RPC
 
-REST API для взаимодействия с Monero Wallet RPC, построенный на фреймворке NestJS. Проект предоставляет удобный интерфейс для управления Monero кошельками, создания субадресов и получения информации о транзакциях.
+REST API for interacting with Monero Wallet RPC, built on the NestJS framework. This project provides a convenient interface for managing Monero wallets, creating subaddresses, and retrieving transaction information.
 
-## Описание
+## Description
 
-Этот проект представляет собой backend-сервис для работы с Monero криптовалютой через Wallet RPC. Основные возможности включают:
+This project is a backend service for working with Monero cryptocurrency through Wallet RPC. Key features include:
 
-- Создание субадресов для пополнения кошелька
-- Получение списка транзакций для конкретного субадреса
-- Интеграция с MongoDB для хранения данных
-- Типобезопасная работа с данными через TypeScript
+- Creating subaddresses for wallet replenishment
+- Retrieving transaction lists for specific subaddresses
+- MongoDB integration for data storage
+- Type-safe data handling with TypeScript
 
-## Технологии
+## Technologies
 
-- **NestJS** v10.2.4 - прогрессивный Node.js фреймворк
-- **TypeScript** v5.1.3 - типизированный JavaScript
-- **MongoDB** - NoSQL база данных
-- **Typegoose** v11.5.0 - TypeScript обертка для Mongoose
-- **monero-javascript** v0.8.4 - библиотека для работы с Monero
-- **class-validator** v0.14.0 - валидация данных
+- **NestJS** v10.2.4 - Progressive Node.js framework
+- **TypeScript** v5.1.3 - Typed JavaScript
+- **MongoDB** - NoSQL database
+- **Typegoose** v11.5.0 - TypeScript wrapper for Mongoose
+- **monero-javascript** v0.8.4 - Library for Monero integration
+- **class-validator** v0.14.0 - Data validation
 
-## Требования
+## Requirements
 
-- Node.js (рекомендуется v18+)
-- npm или yarn
+- Node.js (v18+ recommended)
+- npm or yarn
 - MongoDB (v4.0+)
-- Monero Wallet RPC (запущенный и доступный)
+- Monero Wallet RPC (running and accessible)
 
-## Установка
+## Installation
 
-1. Клонируйте репозиторий:
+1. Clone the repository:
 ```bash
 git clone <repository-url>
 cd API-monero-wallet-rpc
 ```
 
-2. Установите зависимости:
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-3. Настройте переменные окружения в файле `.env`:
+3. Configure environment variables in `.env` file:
 ```env
 MONGO_LOGIN=admin
 MONGO_PASSWORD=admin
@@ -50,51 +50,51 @@ MONGO_AUTHDATABASE=admin
 JWT_SECRET=test
 ```
 
-## Конфигурация
+## Configuration
 
-### Подключение к Monero Wallet RPC
+### Monero Wallet RPC Connection
 
-В файле `src/monero-wallet-rpc/monero-wallet-rpc.service.ts` настройте параметры подключения:
+Configure connection parameters in `src/monero-wallet-rpc/monero-wallet-rpc.service.ts`:
 
 ```typescript
 async getWallet() {
   return await connectToWalletRpc(
-    'http://192.168.0.2:18084',  // URL вашего Wallet RPC
-    'monero',                     // Имя пользователя
-    'rpcPassword',                // Пароль RPC
-  ).openWallet('boss', '1');      // Имя кошелька и пароль
+    'http://192.168.0.2:18084',  // Your Wallet RPC URL
+    'monero',                     // Username
+    'rpcPassword',                // RPC password
+  ).openWallet('boss', '1');      // Wallet name and password
 }
 ```
 
-### Подключение к MongoDB
+### MongoDB Connection
 
-Конфигурация MongoDB находится в `config/mongo.config.ts` и использует переменные окружения из `.env`.
+MongoDB configuration is located in `config/mongo.config.ts` and uses environment variables from `.env`.
 
-## Запуск приложения
+## Running the Application
 
 ```bash
-# Режим разработки
+# Development mode
 npm run start:dev
 
-# Режим отладки
+# Debug mode
 npm run start:debug
 
-# Production режим
+# Production mode
 npm run build
 npm run start:prod
 ```
 
-Приложение запустится на порту **3001**.
+The application will start on port **3001**.
 
 ## API Endpoints
 
-### 1. Создание субадреса для пополнения
+### 1. Create Subaddress for Replenishment
 
 **GET** `/wallet/createSubAccountForReplenishment`
 
-Создает новый субадрес в аккаунте 0 для получения платежей.
+Creates a new subaddress in account 0 for receiving payments.
 
-**Ответ:**
+**Response:**
 ```json
 {
   "address": "8BW...",
@@ -102,20 +102,20 @@ npm run start:prod
 }
 ```
 
-### 2. Получение транзакций для субадреса
+### 2. Get Transactions for Subaddress
 
 **POST** `/wallet/getTxsForSubAddressIndex`
 
-Возвращает список входящих транзакций для указанного субадреса.
+Returns a list of incoming transactions for the specified subaddress.
 
-**Тело запроса:**
+**Request Body:**
 ```json
 {
   "addressIndex": 5
 }
 ```
 
-**Ответ:**
+**Response:**
 ```json
 [
   {
@@ -127,86 +127,86 @@ npm run start:prod
 ]
 ```
 
-## Структура проекта
+## Project Structure
 
 ```
 API-monero-wallet-rpc/
 ├── src/
-│   ├── monero-wallet-rpc/          # Основной модуль работы с Monero
+│   ├── monero-wallet-rpc/          # Main Monero module
 │   │   ├── dto/                    # Data Transfer Objects
 │   │   │   ├── Creat-subAddress-for-replenishment.dto.ts
 │   │   │   └── get-txs-for-subAddress-index.dto.ts
-│   │   ├── model/                  # Модели данных
+│   │   ├── model/                  # Data models
 │   │   │   └── creatWallet.model/
 │   │   │       └── wallet.model.ts
 │   │   ├── monero-wallet-rpc.controller.ts
 │   │   ├── monero-wallet-rpc.service.ts
 │   │   └── monero-wallet-rpc.module.ts
-│   ├── app.module.ts               # Корневой модуль приложения
+│   ├── app.module.ts               # Root application module
 │   ├── app.controller.ts
 │   ├── app.service.ts
-│   └── main.ts                     # Точка входа
+│   └── main.ts                     # Entry point
 ├── config/
-│   └── mongo.config.ts             # Конфигурация MongoDB
-├── test/                           # E2E тесты
-├── .env                            # Переменные окружения
+│   └── mongo.config.ts             # MongoDB configuration
+├── test/                           # E2E tests
+├── .env                            # Environment variables
 ├── package.json
 └── tsconfig.json
 ```
 
-## Разработка
+## Development
 
-### Форматирование кода
+### Code Formatting
 
 ```bash
 npm run format
 ```
 
-### Линтинг
+### Linting
 
 ```bash
 npm run lint
 ```
 
-### Тестирование
+### Testing
 
 ```bash
-# Unit тесты
+# Unit tests
 npm run test
 
-# E2E тесты
+# E2E tests
 npm run test:e2e
 
-# Покрытие тестами
+# Test coverage
 npm run test:cov
 
-# Режим watch
+# Watch mode
 npm run test:watch
 ```
 
-## Модели данных
+## Data Models
 
 ### WalletModel
 
-Модель для хранения информации о кошельках в MongoDB:
+Model for storing wallet information in MongoDB:
 
 ```typescript
 {
-  idUSer: string;      // ID пользователя
-  createdAt: Date;     // Дата создания
-  updatedAt: Date;     // Дата обновления
+  idUSer: string;      // User ID
+  createdAt: Date;     // Creation date
+  updatedAt: Date;     // Update date
 }
 ```
 
-## Безопасность
+## Security
 
-⚠️ **Важно:**
-- Не храните приватные ключи в коде
-- Используйте переменные окружения для конфиденциальных данных
-- Измените дефолтные пароли в `.env` перед деплоем
-- Настройте firewall для ограничения доступа к Wallet RPC
-- Используйте HTTPS в production окружении
+⚠️ **Important:**
+- Never store private keys in code
+- Use environment variables for sensitive data
+- Change default passwords in `.env` before deployment
+- Configure firewall to restrict Wallet RPC access
+- Use HTTPS in production environment
 
-## Лицензия
+## License
 
 UNLICENSED
